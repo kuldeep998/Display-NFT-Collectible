@@ -4,6 +4,7 @@ import { Connection, clusterApiUrl, LAMPORTS_PER_SOL, PublicKey } from "@solana/
 import { getParsedNftAccountsByOwner, isValidSolanaAddress, createConnectionConfig, } from "@nfteyez/sol-rayz";
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
+import $ from 'jquery';
 
 const App = () => {
 
@@ -11,6 +12,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [mintAddress, setMintAddress] = useState(null);
   const [walletAddress, setWalletAddress] = useState(null);
+
 
 
   useEffect(() => {
@@ -44,7 +46,13 @@ const App = () => {
       console.log("connecting url is", connect);
       const provider = getProvider();
       console.log("provider is", provider);
-      let ownerToken = new PublicKey("35CB6WNzbNCPY2yD337jr87n6U6M6RvGkLANDwHdxdeY");
+
+      let wallAddress = $("#walletaddress").val();
+      if (wallAddress === null) {
+        alert("Address is mandatory");
+        return null;
+      }
+      let ownerToken = new PublicKey(wallAddress);
       console.log("public key  is", ownerToken);
       const result = isValidSolanaAddress(ownerToken);
       console.log("result", result);
@@ -80,10 +88,12 @@ const App = () => {
     event.preventDefault();
     console.log(data);
     setMintAddress(data.mintKey);
-    setWalletAddress("35CB6WNzbNCPY2yD337jr87n6U6M6RvGkLANDwHdxdeY");
+    let wallAddress = $("#walletaddress").val();
+    setWalletAddress(wallAddress);
   }
   return (
     <div >
+      <input type="text" id="walletaddress" />
       <button onClick={(event) => { getNFT(event) }}>Get NFT</button>
       <section className="nft mt-2 my-5">
         <div className="container">
@@ -103,7 +113,7 @@ const App = () => {
                         <div className="cart text-center">
                           <div className="img mt-4 pt-3">
                             <img src={val.data.image} alt="loading..." height="200px" width="200px" />
-                            <input type="checkbox" id={ind+"check"} onClick={(event) => { selectImage(event, val) }} />
+                            <input type="checkbox" id={ind + "check"} onClick={(event) => { selectImage(event, val) }} />
                             <br />{"Mint Address " + mintAddress}<br />
                             {"Wallet Address " + walletAddress}<br />
                             <p className="mt-1">{val.data.name}</p>
